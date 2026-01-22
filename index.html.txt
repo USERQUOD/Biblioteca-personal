@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow">
+    <title>High School Salty Heart</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0b0b0b; color: #fff; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        #seccion-ficha { padding-bottom: 50px; }
+        .banner { width: 100%; height: 250px; background: linear-gradient(to bottom, transparent, #0b0b0b), url('portada.jpg'); background-size: cover; background-position: center; filter: blur(8px); opacity: 0.5; }
+        .info { text-align: center; padding: 0 20px; margin-top: -120px; position: relative; }
+        .portada { width: 160px; border-radius: 10px; border: 3px solid #000; box-shadow: 0 5px 25px rgba(0,0,0,0.8); }
+        h1 { margin: 15px 0 5px; font-size: 28px; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
+        .descripcion { color: #aaa; font-size: 15px; margin: 20px auto; max-width: 500px; line-height: 1.6; text-align: center; }
+        .lista-caps { max-width: 600px; margin: 0 auto; padding: 0 15px; display: flex; flex-direction: column-reverse; }
+        .btn-cap { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; margin-bottom: 12px; padding: 20px; border-radius: 10px; text-decoration: none; color: #fff; font-weight: bold; border-left: 5px solid #ed1c24; cursor: pointer; }
+        #seccion-lector { display: none; background: #000; width: 100%; }
+        #viewer { width: 100%; line-height: 0; }
+        #viewer img { width: 100%; display: block; border: none; }
+        .nav-footer { padding: 60px 20px; text-align: center; background: #000; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .btn-next { display: none; background: #ed1c24; color: white; padding: 20px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 18px; width: 100%; max-width: 400px; cursor: pointer; }
+        .btn-prev { display: none; background: #333; color: white; padding: 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 16px; width: 100%; max-width: 400px; cursor: pointer; }
+        .btn-list { display: inline-block; background: transparent; color: #aaa; border: 1px solid #444; padding: 12px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 14px; width: 100%; max-width: 400px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="seccion-ficha">
+        <div class="banner"></div>
+        <div class="info">
+            <img src="portada.jpg" class="portada" onerror="this.style.display='none'">
+            <h1>High School Salty Heart</h1>
+            <p class="descripcion">
+                Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él. Se reaviva la llama y, en una situación desesperada, Geonwu termina compartiendo cama con el chico que juró olvidar.
+            </p>
+            <div class="lista-caps" id="contenedor-caps"></div>
+        </div>
+    </div>
+    <div id="seccion-lector">
+        <div id="viewer"></div>
+        <div class="nav-footer">
+            <a id="btnSiguiente" class="btn-next">SIGUIENTE CAPÍTULO</a>
+            <a id="btnAnterior" class="btn-prev">ANTERIOR</a>
+            <a onclick="volverAlInicio()" class="btn-list">☰ VOLVER A LA LISTA</a>
+        </div>
+    </div>
+    <script>
+        const ficha = document.getElementById('seccion-ficha');
+        const lector = document.getElementById('seccion-lector');
+        const viewer = document.getElementById('viewer');
+const contenedorCaps = document.getElementById('contenedor-caps');
+        const btnSig = document.getElementById('btnSiguiente');
+        const btnAnt = document.getElementById('btnAnterior');
+        async function detectarCapitulos() {
+            contenedorCaps.innerHTML = "";
+            for (let n = 1; n <= 500; n++) {
+                try {
+                    const response = await fetch(cap-${n}/1.jpg, { method: 'HEAD' });
+                    if (response.ok) {
+                        const div = document.createElement('div');
+                        div.className = 'btn-cap';
+                        div.onclick = () => abrirLector(n);
+                        div.innerHTML = <span>Capítulo ${n}</span> <span>⮕</span>;
+                        contenedorCaps.appendChild(div);
+                    } else { break; }
+                } catch (e) { break; }
+            }
+        }
+        function abrirLector(numCap) {
+            window.scrollTo(0,0);
+            ficha.style.display = 'none';
+            lector.style.display = 'block';
+            viewer.innerHTML = ''; 
+            btnSig.style.display = 'none';
+            btnAnt.style.display = 'none';
+            let i = 1;
+            function cargarImgs() {
+                let img = new Image();
+                img.src = cap-${numCap}/${i}.jpg;
+                img.onload = () => { viewer.appendChild(img); i++; cargarImgs(); };
+                img.onerror = () => { verificarSiguiente(numCap); };
+            }
+            cargarImgs();
+        }
+        async function verificarSiguiente(numCap) {
+            if (numCap > 1) {
+                btnAnt.style.display = 'inline-block';
+                btnAnt.onclick = (e) => { e.preventDefault(); abrirLector(numCap - 1); };
+                btnAnt.innerText = "⬅️ ANTERIOR: CAP " + (numCap - 1);
+            }
+            try {
+                const res = await fetch(cap-${numCap + 1}/1.jpg, { method: 'HEAD' });
+                if (res.ok) {
+                    btnSig.style.display = 'inline-block';
+                    btnSig.innerText = "SIGUIENTE: CAP " + (numCap + 1);
+                    btnSig.onclick = (e) => { e.preventDefault(); abrirLector(numCap + 1); };
+                } else { btnSig.style.display = 'none'; }
+            } catch (e) { btnSig.style.display = 'none'; }
+        }
+        function volverAlInicio() {
+            window.scrollTo(0,0);
+            lector.style.display = 'none';
+            ficha.style.display = 'block';
+            detectarCapitulos();
+        }
+        detectarCapitulos();
+    </script>
+</body>
+</html>
