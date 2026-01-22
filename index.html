@@ -3,70 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>High School Salty Heart - Lector</title>
+    <title>High School Salty Heart</title>
     <style>
-        body { background-color: #1a1a1a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        #portada-container { text-align: center; padding: 40px 20px; max-width: 600px; }
-        #portada-img { width: 100%; max-width: 320px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.7); border: 2px solid #333; }
-        h1 { color: #fff; margin-top: 25px; font-size: 28px; }
-        .sinopsis { background: #2a2a2a; padding: 20px; border-radius: 10px; margin: 20px 0; line-height: 1.6; color: #ddd; text-align: left; border-left: 5px solid #e50914; }
-        .btn-capitulo { background: linear-gradient(135deg, #e50914 0%, #b20710 100%); color: white; border: none; padding: 18px 40px; font-size: 20px; cursor: pointer; border-radius: 50px; margin-top: 10px; font-weight: bold; transition: transform 0.2s; }
-        .btn-capitulo:hover { transform: scale(1.05); }
-        #lector { display: none; width: 100%; max-width: 800px; background: #000; }
-        #lector img { width: 100%; display: block; margin: 0; padding: 0; border: none; }
-        .nav-buttons { padding: 20px; display: flex; justify-content: space-between; background: #1a1a1a; width: 100%; box-sizing: border-box; }
-        .btn-volver { background: #333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; }
+        .contenedor { padding: 20px; max-width: 600px; margin: auto; }
+        img.portada { width: 100%; max-width: 300px; border-radius: 10px; margin-bottom: 20px; }
+        .sinopsis { background: #222; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
+        .btn-leer { background: #e50914; color: white; border: none; padding: 15px 40px; font-size: 18px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; }
+        #visor-manga { display: none; background: black; width: 100%; }
+        #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; }
+        .btn-regresar { background: #333; color: white; padding: 10px; display: inline-block; margin: 20px; text-decoration: none; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-    <div id="pantalla-inicio">
-        <div id="portada-container">
-            <img src="portada.jpg" id="portada-img" alt="Portada">
-            <h1>High School Salty Heart</h1>
-            <div class="sinopsis">
-                <strong>Sinopsis:</strong><br>
-                Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él. Se reaviva la llama y, en una situación desesperada, Geonwu termina compartiendo cama con el chico que juró olvidar.
-            </div>
-            <button class="btn-capitulo" onclick="abrirCapitulo(1)">📖 LEER CAPÍTULO 1</button>
+    <div id="inicio" class="contenedor">
+        <h1>High School Salty Heart</h1>
+        <img src="portada.jpg" class="portada">
+        <div class="sinopsis">
+            <strong>Sinopsis:</strong><br>
+            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él. Se reaviva la llama y, en una situación desesperada, Geonwu termina compartiendo cama con el chico que juró olvidar.
         </div>
+        <button class="btn-leer" onclick="cargarCapitulo()">LEER CAPÍTULO 1</button>
     </div>
 
-    <div id="lector">
-        <div class="nav-buttons">
-            <a href="#" class="btn-volver" onclick="location.reload()">⬅️ Volver</a>
-            <span style="color: #888;">Capítulo 1</span>
-        </div>
-        <div id="contenedor-imagenes"></div>
-        <div class="nav-buttons" style="flex-direction: column; align-items: center; gap: 20px;">
-            <p style="color: #666;">Has llegado al final del capítulo</p>
-            <a href="#" class="btn-volver" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Subir ↑</a>
-            <a href="#" class="btn-volver" style="background: #e50914;" onclick="location.reload()">Regresar al Menú</a>
-        </div>
+    <div id="visor-manga">
+        <a href="#" class="btn-regresar" onclick="location.reload()">⬅️ VOLVER AL INICIO</a>
+        <div id="lista-imagenes"></div>
+        <p>Fin del capítulo</p>
+        <a href="#" class="btn-regresar" onclick="window.scrollTo(0,0)">SUBIR ↑</a>
     </div>
 
     <script>
-        function abrirCapitulo(num) {
-            document.getElementById('pantalla-inicio').style.display = 'none';
-            const lector = document.getElementById('lector');
-            const contenedor = document.getElementById('contenedor-imagenes');
-            lector.style.display = 'block';
-            contenedor.innerHTML = ''; 
+        function cargarCapitulo() {
+            document.getElementById('inicio').style.display = 'none';
+            const visor = document.getElementById('visor-manga');
+            const lista = document.getElementById('lista-imagenes');
+            visor.style.display = 'block';
 
-            // Intenta cargar hasta 200 imágenes
-            for (let i = 1; i <= 200; i++) {
+            // Cargamos 100 imágenes (ajusta este número si tienes más)
+            for (let i = 1; i <= 100; i++) {
                 const img = document.createElement('img');
-                // Busca en cap-1/1.jpg, cap-1/2.jpg...
-                img.src = cap-${num}/${i}.jpg;
+                // IMPORTANTE: Asegúrate de que la carpeta se llame cap-1 y las fotos 1.jpg, 2.jpg...
+                img.src = "cap-1/" + i + ".jpg";
                 
-                // Oculta la imagen si no existe (cuando llega al final)
+                // Si la imagen no existe, simplemente no la muestra
                 img.onerror = function() {
                     this.style.display = 'none';
                 };
                 
-                contenedor.appendChild(img);
+                lista.appendChild(img);
             }
-            window.scrollTo(0,0);
         }
     </script>
 </body>
