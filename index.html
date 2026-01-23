@@ -3,74 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>High School Salty Heart - Biblioteca</title>
+    <title>High School Salty Heart - Lector</title>
     <style>
         body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; }
-        .contenedor { padding: 20px; max-width: 600px; margin: auto; }
+        .contenedor { padding: 20px; max-width: 500px; margin: auto; }
         img.portada { width: 100%; max-width: 280px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-        .sinopsis { background: #1e1e1e; padding: 20px; border-radius: 10px; text-align: left; margin: 20px 0; font-size: 14px; border-left: 4px solid #e50914; }
-        .grid-capitulos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
-        .btn-cap { background: #333; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; font-weight: bold; }
-        .btn-cap:hover { background: #e50914; }
-        #lector { display: none; background: black; }
+        .sinopsis { background: #1e1e1e; padding: 20px; border-radius: 10px; text-align: left; margin: 20px 0; font-size: 14px; border-left: 4px solid #e50914; line-height: 1.5; color: #ddd; }
+        .caja-selector { background: #222; padding: 25px; border-radius: 12px; border: 1px solid #333; margin-top: 20px; }
+        input { padding: 12px; width: 100px; border-radius: 5px; border: 1px solid #444; background: #000; color: #fff; font-size: 18px; text-align: center; }
+        .btn-leer { background: #e50914; color: white; border: none; padding: 12px 30px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 16px; margin-top: 10px; width: 100%; }
+        #lector { display: none; background: black; min-height: 100vh; }
         #lector img { width: 100%; max-width: 800px; display: block; margin: 0 auto; }
-        .nav { padding: 15px; background: #111; position: sticky; top: 0; display: flex; justify-content: space-between; }
-        .btn-v { color: #fff; text-decoration: none; background: #444; padding: 8px 15px; border-radius: 4px; }
+        .nav { padding: 15px; background: #111; position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; z-index: 100; }
+        .btn-v { color: #fff; text-decoration: none; background: #444; padding: 8px 15px; border-radius: 4px; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="inicio" class="contenedor">
         <h1>High School Salty Heart</h1>
-        <img src="portada.jpg" class="portada">
+        <img src="portada.jpg" class="portada" alt="Portada">
         <div class="sinopsis">
             <strong>Sinopsis:</strong><br>
-            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él...
+            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él. Se reaviva la llama y, en una situación desesperada, Geonwu termina compartiendo cama con el chico que juró olvidar.
         </div>
         
-        <h3>Capítulos disponibles:</h3>
-        <div class="grid-capitulos" id="menu-capitulos">
-            </div>
+        <div class="caja-selector">
+            <p style="margin-bottom: 10px; color: #aaa;">Selecciona el capítulo:</p>
+            <input type="number" id="numCapInput" value="1" min="1">
+            <button class="btn-leer" onclick="irAlCapitulo()">ABRIR CAPÍTULO</button>
+        </div>
     </div>
 
     <div id="lector">
         <div class="nav">
-            <a href="javascript:location.reload()" class="btn-v">⬅️ VOLVER</a>
-            <span id="num-cap-titulo"></span>
+            <a href="javascript:location.reload()" class="btn-v">⬅ VOLVER</a>
+            <span id="num-cap-titulo" style="font-weight: bold; color: #e50914;"></span>
+            <div style="width: 40px;"></div>
         </div>
         <div id="imagenes"></div>
-        <p style="padding: 40px;">Fin del capítulo</p>
+        <div style="padding: 50px; background: #121212;">
+            <p style="color: #666;">Has llegado al final del capítulo</p>
+            <button class="btn-v" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Subir ↑</button>
+        </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN: Solo cambia este número si tienes más de 20 capítulos
-        const totalCapitulos = 20; 
-
-        const menu = document.getElementById('menu-capitulos');
-
-        // Crea los botones automáticamente al cargar la página
-        for (let i = 1; i <= totalCapitulos; i++) {
-            let btn = document.createElement('button');
-            btn.className = 'btn-cap';
-            btn.innerText = 'Capítulo ' + i;
-            btn.onclick = () => abrirCap(i);
-            menu.appendChild(btn);
+        function irAlCapitulo() {
+            const n = document.getElementById('numCapInput').value;
+            if(n > 0) abrirCap(n);
         }
 
         function abrirCap(n) {
             document.getElementById('inicio').style.display = 'none';
             document.getElementById('lector').style.display = 'block';
-            document.getElementById('num-cap-titulo').innerText = 'Capítulo ' + n;
+            document.getElementById('num-cap-titulo').innerText = 'CAPÍTULO ' + n;
             const cont = document.getElementById('imagenes');
-            cont.innerHTML = ''; 
+            cont.innerHTML = '<p style="padding: 20px;">Cargando imágenes...</p>'; 
 
-            // Carga hasta 200 imágenes de la carpeta correspondiente
-            for (let j = 1; j <= 200; j++) {
-                let img = document.createElement('img');
-                img.src = cap-${n}/${j}.jpg;
-                img.onerror = function() { this.style.display = 'none'; };
-                cont.appendChild(img);
-            }
+            setTimeout(() => {
+                cont.innerHTML = ''; 
+                // Cargará hasta 500 imágenes por carpeta
+                for (let j = 1; j <= 500; j++) {
+                    let img = document.createElement('img');
+                    img.src = cap-${n}/${j}.jpg;
+                    img.loading = "lazy"; // Esto hace que la página cargue más rápido
+                    img.onerror = function() { this.style.display = 'none'; };
+                    cont.appendChild(img);
+                }
+            }, 300);
             window.scrollTo(0,0);
         }
     </script>
