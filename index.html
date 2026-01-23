@@ -7,7 +7,7 @@
     <style>
         body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; overflow-x: hidden; }
         
-        /* Fondo Borroso */
+        /* FONDO BORROSO */
         .fondo-borroso {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -31,7 +31,7 @@
             backdrop-filter: blur(10px); border-left: 4px solid #e50914;
         }
         
-        /* Grid de botones */
+        /* GRID DE BOTONES AUTOMÁTICOS */
         .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
         
         .btn-cap { 
@@ -42,11 +42,11 @@
         }
         .btn-cap:hover { transform: scale(1.05); background: #ff0000; }
         
-        /* Lector */
+        /* LECTOR LIMPIO (SIN NADA ARRIBA) */
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; }
         
-        /* Navegación final */
+        /* NAVEGACIÓN SOLO ABAJO */
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
         .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; }
@@ -73,16 +73,17 @@
         <div id="lista-imagenes"></div>
 
         <div class="controles-inferiores">
+            <p style="color: #666; margin-bottom: 10px;">Fin del capítulo</p>
             <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO ➡️</button>
-            <button class="btn-secundario" onclick="location.reload()">LISTA DE CAPÍTULOS</button>
-            <button id="btn-ant" class="btn-secundario">⬅️ ANTERIOR</button>
+            <button class="btn-secundario" onclick="location.reload()">VER LISTA DE CAPÍTULOS</button>
+            <button id="btn-ant" class="btn-secundario">⬅️ CAPÍTULO ANTERIOR</button>
         </div>
     </div>
 
     <script>
         const contenedorBotones = document.getElementById('lista-botones');
         
-        // Función para detectar capítulos automáticamente
+        // FUNCIÓN DE DETECCIÓN AUTOMÁTICA MEJORADA
         function detectarCapitulos() {
             for (let i = 1; i <= 500; i++) {
                 const boton = document.createElement('button');
@@ -92,9 +93,10 @@
                 boton.onclick = () => abrirCapitulo(i);
                 contenedorBotones.appendChild(boton);
 
-                // Comprobamos si la carpeta existe buscando la imagen 1.jpg
+                // Forzamos la búsqueda de la imagen 1.jpg en cada carpeta
                 let imgCheck = new Image();
-                imgCheck.src = "cap-" + i + "/1.jpg";
+                // Añadimos un parámetro de tiempo para evitar la caché de GitHub
+                imgCheck.src = "cap-" + i + "/1.jpg?t=" + new Date().getTime();
 
                 imgCheck.onload = function() {
                     document.getElementById('btn-cap-' + i).style.display = 'block';
@@ -103,25 +105,24 @@
         }
 
         function abrirCapitulo(num) {
+            // Ocultamos todo lo demás
             document.getElementById('inicio').style.display = 'none';
             document.querySelector('.fondo-borroso').style.display = 'none';
             document.getElementById('visor-manga').style.display = 'block';
             
             const listaImg = document.getElementById('lista-imagenes');
-            listaImg.innerHTML = '<p style="padding:20px;">Cargando imágenes...</p>'; 
+            listaImg.innerHTML = ''; 
 
-            setTimeout(() => {
-                listaImg.innerHTML = ''; 
-                for (let j = 1; j <= 300; j++) {
-                    const img = document.createElement('img');
-                    img.src = cap-${num}/${j}.jpg;
-                    img.loading = "lazy";
-                    img.onerror = function() { this.style.display = 'none'; };
-                    listaImg.appendChild(img);
-                }
-            }, 500);
+            // Cargar hasta 300 imágenes por capítulo
+            for (let j = 1; j <= 300; j++) {
+                const img = document.createElement('img');
+                img.src = cap-${num}/${j}.jpg;
+                img.loading = "lazy";
+                img.onerror = function() { this.style.display = 'none'; };
+                listaImg.appendChild(img);
+            }
 
-            // Lógica de botones de navegación
+            // Configurar botones de navegación inferior
             document.getElementById('btn-ant').style.display = (num > 1) ? 'block' : 'none';
             document.getElementById('btn-ant').onclick = () => abrirCapitulo(num - 1);
             
@@ -131,7 +132,7 @@
             window.scrollTo(0,0);
         }
 
-        // Iniciar detección
+        // Iniciar la búsqueda de capítulos al cargar la página
         detectarCapitulos();
     </script>
 </body>
