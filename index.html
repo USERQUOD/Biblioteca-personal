@@ -31,22 +31,21 @@
             backdrop-filter: blur(10px); border-left: 4px solid #e50914;
         }
         
-        /* GRID DE BOTONES AUTOMÁTICOS */
+        /* GRID DE BOTONES */
         .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
         
         .btn-cap { 
             background: #e50914; color: white; border: none; padding: 15px; 
             cursor: pointer; border-radius: 5px; font-weight: bold; 
-            display: none; /* Se activa solo si existe la carpeta */
             transition: 0.3s;
         }
         .btn-cap:hover { transform: scale(1.05); background: #ff0000; }
         
-        /* LECTOR LIMPIO (SIN NADA ARRIBA) */
+        /* VISOR LIMPIO */
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; }
         
-        /* NAVEGACIÓN SOLO ABAJO */
+        /* CONTROLES ABAJO */
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
         .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; }
@@ -82,30 +81,22 @@
 
     <script>
         const contenedorBotones = document.getElementById('lista-botones');
-        
-        // FUNCIÓN DE DETECCIÓN AUTOMÁTICA MEJORADA
-        function detectarCapitulos() {
-            for (let i = 1; i <= 500; i++) {
+
+        // ==========================================
+        // AQUÍ PONES CUÁNTOS CAPÍTULOS HAS SUBIDO:
+        const capitulosSubidos = 1; 
+        // ==========================================
+        function crearBotones() {
+            for (let i = 1; i <= capitulosSubidos; i++) {
                 const boton = document.createElement('button');
                 boton.className = 'btn-cap';
-                boton.id = 'btn-cap-' + i;
                 boton.innerText = 'Cap ' + i;
                 boton.onclick = () => abrirCapitulo(i);
                 contenedorBotones.appendChild(boton);
-
-                // Forzamos la búsqueda de la imagen 1.jpg en cada carpeta
-                let imgCheck = new Image();
-                // Añadimos un parámetro de tiempo para evitar la caché de GitHub
-                imgCheck.src = "cap-" + i + "/1.jpg?t=" + new Date().getTime();
-
-                imgCheck.onload = function() {
-                    document.getElementById('btn-cap-' + i).style.display = 'block';
-                };
             }
         }
 
         function abrirCapitulo(num) {
-            // Ocultamos todo lo demás
             document.getElementById('inicio').style.display = 'none';
             document.querySelector('.fondo-borroso').style.display = 'none';
             document.getElementById('visor-manga').style.display = 'block';
@@ -113,8 +104,7 @@
             const listaImg = document.getElementById('lista-imagenes');
             listaImg.innerHTML = ''; 
 
-            // Cargar hasta 300 imágenes por capítulo
-            for (let j = 1; j <= 300; j++) {
+            for (let j = 1; j <= 400; j++) {
                 const img = document.createElement('img');
                 img.src = cap-${num}/${j}.jpg;
                 img.loading = "lazy";
@@ -122,18 +112,23 @@
                 listaImg.appendChild(img);
             }
 
-            // Configurar botones de navegación inferior
+            // Navegación
             document.getElementById('btn-ant').style.display = (num > 1) ? 'block' : 'none';
             document.getElementById('btn-ant').onclick = () => abrirCapitulo(num - 1);
             
-            document.getElementById('btn-sig').innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
-            document.getElementById('btn-sig').onclick = () => abrirCapitulo(num + 1);
+            // Si el siguiente no existe en tu lista, ocultamos el botón
+            if (num < capitulosSubidos) {
+                document.getElementById('btn-sig').style.display = 'block';
+                document.getElementById('btn-sig').innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
+                document.getElementById('btn-sig').onclick = () => abrirCapitulo(num + 1);
+            } else {
+                document.getElementById('btn-sig').style.display = 'none';
+            }
 
             window.scrollTo(0,0);
         }
 
-        // Iniciar la búsqueda de capítulos al cargar la página
-        detectarCapitulos();
+        crearBotones();
     </script>
 </body>
 </html>
