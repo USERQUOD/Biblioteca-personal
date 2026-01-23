@@ -28,19 +28,16 @@
         
         .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-top: 20px; }
         
-        .btn-cap { background: #e50914; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; font-weight: bold; }
-        
-        /* Lector optimizado */
-        #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
-        #visor-manga img { 
-            width: 100%; 
-            max-width: 800px; 
-            display: block; 
-            margin: 0 auto; 
-            height: auto;
-            min-height: 300px; /* Reserva espacio para que no salte la pantalla */
-            background: #000;
+        /* BOTONES ROJOS */
+        .btn-cap { 
+            background: #e50914; color: white; border: none; padding: 15px; 
+            cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 14px;
+            display: block; /* Forzamos que se vean */
         }
+        .btn-cap:hover { background: #ff0000; transform: scale(1.05); }
+        
+        #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
+        #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
         
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
@@ -58,8 +55,12 @@
             <strong>Sinopsis:</strong><br>
             Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero el destino lo empuja de nuevo hacia él.
         </div>
+        
         <h3 style="text-align: left;">Capítulos Publicados:</h3>
-        <div class="grid-capitulos" id="lista-botones"></div>
+        
+        <div class="grid-capitulos" id="lista-botones">
+            <button class="btn-cap" onclick="abrirCapitulo(1)">Cap 1</button>
+            </div>
     </div>
 
     <div id="visor-manga">
@@ -73,22 +74,8 @@
     </div>
 
     <script>
-        // --- SOLO CAMBIA ESTE NÚMERO ---
-        const capitulosSubidos = 1; 
-        // -------------------------------
-
-        const contenedorBotones = document.getElementById('lista-botones');
-
-        function crearBotones() {
-            contenedorBotones.innerHTML = '';
-            for (let i = 1; i <= capitulosSubidos; i++) {
-                const boton = document.createElement('button');
-                boton.className = 'btn-cap';
-                boton.innerText = 'Cap ' + i;
-                boton.onclick = () => abrirCapitulo(i);
-                contenedorBotones.appendChild(boton);
-            }
-        }
+        // Cambia este número al total de capítulos que tengas
+        const totalCaps = 1;
 
         function abrirCapitulo(num) {
             document.getElementById('inicio').style.display = 'none';
@@ -96,25 +83,28 @@
             document.getElementById('visor-manga').style.display = 'block';
             
             const listaImg = document.getElementById('lista-imagenes');
-            listaImg.innerHTML = ''; 
+            listaImg.innerHTML = '<p style="padding:20px;">Cargando imágenes...</p>'; 
 
-            // CREACIÓN RÁPIDA DE IMÁGENES
-            for (let j = 1; j <= 400; j++) {
-                const img = document.createElement('img');
-                img.src = cap-${num}/${j}.jpg;
-                img.loading = "lazy"; // <--- ESTO ES LO QUE DA VELOCIDAD
-                img.alt = "Cargando página...";
-                img.onerror = function() { this.style.display = 'none'; };
-                listaImg.appendChild(img);
-            }
+            // Pequeña espera para que la pantalla no se congele
+            setTimeout(() => {
+                listaImg.innerHTML = ''; 
+                for (let j = 1; j <= 400; j++) {
+                    const img = document.createElement('img');
+                    img.src = "cap-" + num + "/" + j + ".jpg";
+                    img.loading = "lazy";
+                    img.onerror = function() { this.style.display = 'none'; };
+                    listaImg.appendChild(img);
+                }
+            }, 100);
 
-            // Configurar botones de navegación
+            // Navegación
             const btnSig = document.getElementById('btn-sig');
             const btnAnt = document.getElementById('btn-ant');
+
             btnAnt.style.display = (num > 1) ? 'block' : 'none';
             btnAnt.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num - 1); };
             
-            if (num < capitulosSubidos) {
+            if (num < totalCaps) {
                 btnSig.style.display = 'block';
                 btnSig.innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
                 btnSig.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num + 1); };
@@ -124,8 +114,6 @@
 
             window.scrollTo(0,0);
         }
-
-        crearBotones();
     </script>
 </body>
 </html>
