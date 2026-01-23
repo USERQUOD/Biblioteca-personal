@@ -7,7 +7,6 @@
     <style>
         body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; overflow-x: hidden; }
         
-        /* FONDO BORROSO */
         .fondo-borroso {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -31,8 +30,14 @@
             backdrop-filter: blur(10px); border-left: 4px solid #e50914;
         }
         
-        /* GRID DE BOTONES */
-        .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+        /* Contenedor de botones */
+        .grid-capitulos { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
+            gap: 12px; 
+            margin-top: 20px;
+            min-height: 50px; /* Para asegurar que el espacio exista */
+        }
         
         .btn-cap { 
             background: #e50914; color: white; border: none; padding: 15px; 
@@ -41,11 +46,9 @@
         }
         .btn-cap:hover { transform: scale(1.05); background: #ff0000; }
         
-        /* VISOR LIMPIO */
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; }
         
-        /* CONTROLES ABAJO */
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
         .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; }
@@ -70,7 +73,6 @@
 
     <div id="visor-manga">
         <div id="lista-imagenes"></div>
-
         <div class="controles-inferiores">
             <p style="color: #666; margin-bottom: 10px;">Fin del capítulo</p>
             <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO ➡️</button>
@@ -80,18 +82,23 @@
     </div>
 
     <script>
-        const contenedorBotones = document.getElementById('lista-botones');
+        // --- CONFIGURACIÓN MANUAL ---
+        // Cambia este número al total de capítulos que tengas carpetas (ej. 1, 2, 5...)
+        const capitulosSubidos = 1; 
+        // ----------------------------
 
-        // ==========================================
-        // AQUÍ PONES CUÁNTOS CAPÍTULOS HAS SUBIDO:
-        const capitulosSubidos = 2; // <--- CAMBIA ESTE NÚMERO
-        // ==========================================
+        const contenedorBotones = document.getElementById('lista-botones');
         function crearBotones() {
+            // Limpiamos por si acaso
+            contenedorBotones.innerHTML = '';
+            
             for (let i = 1; i <= capitulosSubidos; i++) {
                 const boton = document.createElement('button');
                 boton.className = 'btn-cap';
                 boton.innerText = 'Cap ' + i;
-                boton.onclick = () => abrirCapitulo(i);
+                boton.onclick = function() {
+                    abrirCapitulo(i);
+                };
                 contenedorBotones.appendChild(boton);
             }
         }
@@ -104,16 +111,15 @@
             const listaImg = document.getElementById('lista-imagenes');
             listaImg.innerHTML = ''; 
 
-            // Carga imágenes del 1 al 400
             for (let j = 1; j <= 400; j++) {
                 const img = document.createElement('img');
-                img.src = cap-${num}/${j}.jpg;
+                img.src = "cap-" + num + "/" + j + ".jpg";
                 img.loading = "lazy";
                 img.onerror = function() { this.style.display = 'none'; };
                 listaImg.appendChild(img);
             }
 
-            // Configuración de botones inferiores
+            // Configurar botones de navegación
             document.getElementById('btn-ant').style.display = (num > 1) ? 'block' : 'none';
             document.getElementById('btn-ant').onclick = () => abrirCapitulo(num - 1);
             
@@ -128,8 +134,8 @@
             window.scrollTo(0,0);
         }
 
-        crearBotones();
+        // EJECUTAR AL CARGAR
+        window.onload = crearBotones;
     </script>
 </body>
 </html>
-
