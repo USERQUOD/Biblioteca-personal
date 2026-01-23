@@ -84,7 +84,7 @@
 
         // ==========================================
         // AQUÍ PONES CUÁNTOS CAPÍTULOS HAS SUBIDO:
-        const capitulosSubidos = 1; 
+        const capitulosSubidos = 1; // <--- CAMBIA ESTE NÚMERO
         // ==========================================
         function crearBotones() {
             for (let i = 1; i <= capitulosSubidos; i++) {
@@ -104,6 +104,7 @@
             const listaImg = document.getElementById('lista-imagenes');
             listaImg.innerHTML = ''; 
 
+            // Carga imágenes del 1 al 400
             for (let j = 1; j <= 400; j++) {
                 const img = document.createElement('img');
                 img.src = cap-${num}/${j}.jpg;
@@ -112,11 +113,10 @@
                 listaImg.appendChild(img);
             }
 
-            // Navegación
+            // Configuración de botones inferiores
             document.getElementById('btn-ant').style.display = (num > 1) ? 'block' : 'none';
             document.getElementById('btn-ant').onclick = () => abrirCapitulo(num - 1);
             
-            // Si el siguiente no existe en tu lista, ocultamos el botón
             if (num < capitulosSubidos) {
                 document.getElementById('btn-sig').style.display = 'block';
                 document.getElementById('btn-sig').innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
