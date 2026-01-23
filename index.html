@@ -21,10 +21,8 @@
         }
         .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-top: 20px; min-height: 50px; }
         .btn-cap { background: #e50914; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 14px; }
-        
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
-        
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
         .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; width: 100%; max-width: 350px; }
@@ -56,20 +54,23 @@
     </div>
 
     <script>
-        // --- ESTE ES EL ÚNICO NÚMERO QUE TOCARÁS ---
+        // --- 1. CONFIGURACIÓN: CAMBIA EL 2 POR EL 3 CUANDO SUBAS EL NUEVO ---
         const totalCaps = 2; 
 
-        function cargarBotonesHome() {
+        // --- 2. FUNCIÓN DE CREACIÓN (BLINDADA) ---
+        function generarBotones() {
             const contenedor = document.getElementById('lista-botones');
             if (!contenedor) return;
-            
-            let acumuladorDeBotones = '';
+
+            let botones = '';
             for (let i = 1; i <= totalCaps; i++) {
-                acumuladorDeBotones += <button class="btn-cap" onclick="abrirCapitulo(${i})">Cap ${i}</button>;
+                botones += <button class="btn-cap" onclick="abrirCapitulo(${i})">Cap ${i}</button>;
             }
-            contenedor.innerHTML = acumuladorDeBotones;
+            contenedor.innerHTML = botones;
+            console.log("Botones generados:", totalCaps);
         }
 
+        // --- 3. VISOR Y NAVEGACIÓN ---
         function abrirCapitulo(num) {
             document.getElementById('inicio').style.display = 'none';
             document.querySelector('.fondo-borroso').style.display = 'none';
@@ -78,10 +79,9 @@
             const listaImg = document.getElementById('lista-imagenes');
             listaImg.innerHTML = ''; 
 
-            // Generar imágenes
             for (let j = 1; j <= 400; j++) {
                 const img = document.createElement('img');
-                img.src = cap-${num}/${j}.jpg;
+                img.src = "cap-" + num + "/" + j + ".jpg";
                 img.loading = "lazy";
                 img.onerror = function() { this.remove(); };
                 listaImg.appendChild(img);
@@ -90,7 +90,7 @@
             const btnSig = document.getElementById('btn-sig');
             const btnAnt = document.getElementById('btn-ant');
 
-            // Lógica Siguiente: Si el cap actual es menor al total, mostramos botón
+            // Lógica Siguiente
             if (num < totalCaps) {
                 btnSig.style.display = 'block';
                 btnSig.innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
@@ -99,10 +99,10 @@
                 btnSig.style.display = 'none';
             }
 
-            // Lógica Anterior: Si el cap actual es mayor a 1, mostramos botón
+            // Lógica Anterior
             if (num > 1) {
                 btnAnt.style.display = 'block';
-                btnAnt.innerText = '⬅️ CAPÍTULO ANTERIOR ' + (num - 1);
+                btnAnt.innerText = 'CAPÍTULO ANTERIOR ' + (num - 1);
                 btnAnt.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num - 1); };
             } else {
                 btnAnt.style.display = 'none';
@@ -111,8 +111,10 @@
             window.scrollTo(0,0);
         }
 
-        // Ejecutar inmediatamente
-        cargarBotonesHome();
+        // --- 4. TRIPLE DISPARADOR (Para que no falle nunca) ---
+        generarBotones(); // Intento 1: Inmediato
+        document.addEventListener('DOMContentLoaded', generarBotones); // Intento 2: HTML listo
+        window.addEventListener('load', generarBotones); // Intento 3: Todo cargado
     </script>
 </body>
 </html>
