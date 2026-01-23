@@ -12,7 +12,7 @@
             background-size: cover; filter: blur(25px) brightness(0.2);
             z-index: -1;
         }
-        .contenedor { padding: 40px 20px; max-width: 600px; margin: auto; }
+        .contenedor { padding: 40px 20px; max-width: 600px; margin: auto; position: relative; }
         img.portada { width: 100%; max-width: 280px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .sinopsis { 
             background: rgba(20, 20, 20, 0.85); padding: 20px; border-radius: 10px; 
@@ -54,48 +54,52 @@
         <div class="controles-inferiores">
             <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO</button>
             <button class="btn-secundario" onclick="window.location.reload()">VOLVER A LA LISTA</button>
-            <button id="btn-ant" class="btn-secundario" style="display:none;">CAPÍTULO ANTERIOR</button>
+            <button id="btn-ant" class="btn-secundario" style="display:none;">⬅️ CAPÍTULO ANTERIOR</button>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN: CAMBIA ESTO A 3 CUANDO SUBAS EL CAP 3
-        const totalCapsActuales = 2; 
+        // CAMBIA ESTO A 3 CUANDO SUBAS EL CAP 3
+        var totalCapsActuales = 2; 
 
         function abrirCapitulo(num) {
+            // Ocultar inicio y mostrar visor
             document.getElementById('inicio').style.display = 'none';
             document.getElementById('visor-manga').style.display = 'block';
+            window.scrollTo(0,0);
             
-            const visor = document.getElementById('lista-imagenes');
-            visor.innerHTML = '<p>Cargando...</p>'; 
+            var visor = document.getElementById('lista-imagenes');
+            visor.innerHTML = ''; 
 
-            let imagenes = '';
-            for (let j = 1; j <= 400; j++) {
-                imagenes += <img src="cap-${num}/${j}.jpg" loading="lazy" onerror="this.remove()">;
+            // Cargar imágenes del capítulo
+            for (var j = 1; j <= 400; j++) {
+                var img = document.createElement('img');
+                img.src = "cap-" + num + "/" + j + ".jpg";
+                img.loading = "lazy";
+                img.onerror = function() { this.remove(); };
+                visor.appendChild(img);
             }
-            visor.innerHTML = imagenes;
+            // Configurar botones de navegación
+            var btnSig = document.getElementById('btn-sig');
+            var btnAnt = document.getElementById('btn-ant');
 
-            const btnSig = document.getElementById('btn-sig');
-            const btnAnt = document.getElementById('btn-ant');
-            // Lógica Botón Siguiente
+            // Botón Siguiente
             if (num < totalCapsActuales) {
                 btnSig.style.display = 'block';
                 btnSig.innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
-                btnSig.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num + 1); };
+                btnSig.onclick = function() { abrirCapitulo(num + 1); };
             } else {
                 btnSig.style.display = 'none';
             }
 
-            // Lógica Botón Anterior
+            // Botón Anterior
             if (num > 1) {
                 btnAnt.style.display = 'block';
                 btnAnt.innerText = '⬅️ CAPÍTULO ANTERIOR ' + (num - 1);
-                btnAnt.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num - 1); };
+                btnAnt.onclick = function() { abrirCapitulo(num - 1); };
             } else {
                 btnAnt.style.display = 'none';
             }
-
-            window.scrollTo(0,0);
         }
     </script>
 </body>
