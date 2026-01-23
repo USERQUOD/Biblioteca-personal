@@ -19,10 +19,12 @@
             text-align: left; margin-bottom: 25px; font-size: 14px; line-height: 1.5; 
             backdrop-filter: blur(10px); border-left: 4px solid #e50914;
         }
-        .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-top: 20px; }
+        .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-top: 20px; min-height: 50px; }
         .btn-cap { background: #e50914; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 14px; }
+        
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
+        
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
         .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; width: 100%; max-width: 350px; }
@@ -39,8 +41,8 @@
             <strong>Sinopsis:</strong><br>
             Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero el destino lo empuja de nuevo hacia él.
         </div>
-        <h3 style="text-align: left;">Capítulos Publicados:</h3>
         
+        <h3 style="text-align: left;">Capítulos Publicados:</h3>
         <div class="grid-capitulos" id="lista-botones"></div>
     </div>
 
@@ -54,19 +56,18 @@
     </div>
 
     <script>
-        // 1. CADA VEZ QUE SUBAS UN CAP, SOLO CAMBIA ESTE NÚMERO
+        // --- ESTE ES EL ÚNICO NÚMERO QUE TOCARÁS ---
         const totalCaps = 2; 
 
-        // 2. Esta función borra lo viejo y pone los botones nuevos
-        function cargarBotones() {
+        function cargarBotonesHome() {
             const contenedor = document.getElementById('lista-botones');
             if (!contenedor) return;
             
-            let botonesHTML = '';
+            let acumuladorDeBotones = '';
             for (let i = 1; i <= totalCaps; i++) {
-                botonesHTML += <button class="btn-cap" onclick="abrirCapitulo(${i})">Cap ${i}</button>;
+                acumuladorDeBotones += <button class="btn-cap" onclick="abrirCapitulo(${i})">Cap ${i}</button>;
             }
-            contenedor.innerHTML = botonesHTML; 
+            contenedor.innerHTML = acumuladorDeBotones;
         }
 
         function abrirCapitulo(num) {
@@ -75,17 +76,21 @@
             document.getElementById('visor-manga').style.display = 'block';
             
             const listaImg = document.getElementById('lista-imagenes');
-            listaImg.innerHTML = '<p style="padding:20px;">Cargando...</p>'; 
+            listaImg.innerHTML = ''; 
 
-            let imagenesHTML = '';
+            // Generar imágenes
             for (let j = 1; j <= 400; j++) {
-                imagenesHTML += <img src="cap-${num}/${j}.jpg" loading="lazy" onerror="this.remove()">;
+                const img = document.createElement('img');
+                img.src = cap-${num}/${j}.jpg;
+                img.loading = "lazy";
+                img.onerror = function() { this.remove(); };
+                listaImg.appendChild(img);
             }
-            listaImg.innerHTML = imagenesHTML;
 
             const btnSig = document.getElementById('btn-sig');
             const btnAnt = document.getElementById('btn-ant');
 
+            // Lógica Siguiente: Si el cap actual es menor al total, mostramos botón
             if (num < totalCaps) {
                 btnSig.style.display = 'block';
                 btnSig.innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
@@ -94,18 +99,20 @@
                 btnSig.style.display = 'none';
             }
 
+            // Lógica Anterior: Si el cap actual es mayor a 1, mostramos botón
             if (num > 1) {
                 btnAnt.style.display = 'block';
-                btnAnt.innerText = 'CAPÍTULO ANTERIOR ' + (num - 1);
+                btnAnt.innerText = '⬅️ CAPÍTULO ANTERIOR ' + (num - 1);
                 btnAnt.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num - 1); };
             } else {
                 btnAnt.style.display = 'none';
             }
+
             window.scrollTo(0,0);
         }
 
-        // 3. Ejecutar inmediatamente al cargar la página
-        cargarBotones();
+        // Ejecutar inmediatamente
+        cargarBotonesHome();
     </script>
 </body>
 </html>
