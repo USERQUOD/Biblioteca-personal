@@ -3,39 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>High School Salty Heart - Biblioteca</title>
+    <title>High School Salty Heart</title>
     <style>
         body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; overflow-x: hidden; }
-        
         .fondo-borroso {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('portada.jpg') no-repeat center center;
             background-size: cover; filter: blur(25px) brightness(0.2);
             z-index: -1; transform: scale(1.1);
         }
-
         .contenedor { padding: 40px 20px; max-width: 600px; margin: auto; position: relative; }
         img.portada { width: 100%; max-width: 280px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-
         .sinopsis { 
             background: rgba(20, 20, 20, 0.85); padding: 20px; border-radius: 10px; 
             text-align: left; margin-bottom: 25px; font-size: 14px; line-height: 1.5; 
             backdrop-filter: blur(10px); border-left: 4px solid #e50914;
         }
-        
-        .grid-capitulos { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
-            gap: 12px; 
-            margin-top: 20px; 
-            min-height: 50px; 
-        }
-        
+        .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-top: 20px; }
         .btn-cap { background: #e50914; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 14px; }
-        
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
-        
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
         .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; width: 100%; max-width: 350px; }
@@ -52,53 +39,50 @@
             <strong>Sinopsis:</strong><br>
             Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero el destino lo empuja de nuevo hacia él.
         </div>
-        
         <h3 style="text-align: left;">Capítulos Publicados:</h3>
-        <div class="grid-capitulos" id="lista-botones">
-            </div>
+        
+        <div class="grid-capitulos" id="lista-botones"></div>
     </div>
 
     <div id="visor-manga">
         <div id="lista-imagenes"></div>
         <div class="controles-inferiores">
-            <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO ➡️</button>
+            <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO</button>
             <button class="btn-secundario" onclick="window.location.reload()">VOLVER A LA LISTA</button>
-            <button id="btn-ant" class="btn-secundario" style="display:none;">⬅️ CAPÍTULO ANTERIOR</button>
+            <button id="btn-ant" class="btn-secundario" style="display:none;">CAPÍTULO ANTERIOR</button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN: CAMBIA ESTE NÚMERO SEGÚN SUBAS CAPS ---
+        // 1. CADA VEZ QUE SUBAS UN CAP, SOLO CAMBIA ESTE NÚMERO
         const totalCaps = 2; 
 
-        // Esta función se ejecuta sola apenas abre la página
+        // 2. Esta función borra lo viejo y pone los botones nuevos
         function cargarBotones() {
             const contenedor = document.getElementById('lista-botones');
-            let contenidoHTML = '';
+            if (!contenedor) return;
             
+            let botonesHTML = '';
             for (let i = 1; i <= totalCaps; i++) {
-                contenidoHTML += <button class="btn-cap" onclick="abrirCapitulo(${i})">Cap ${i}</button>;
+                botonesHTML += <button class="btn-cap" onclick="abrirCapitulo(${i})">Cap ${i}</button>;
             }
-            
-            contenedor.innerHTML = contenidoHTML;
+            contenedor.innerHTML = botonesHTML; 
         }
+
         function abrirCapitulo(num) {
             document.getElementById('inicio').style.display = 'none';
             document.querySelector('.fondo-borroso').style.display = 'none';
             document.getElementById('visor-manga').style.display = 'block';
             
             const listaImg = document.getElementById('lista-imagenes');
-            listaImg.innerHTML = '<p style="padding:20px;">Cargando imágenes...</p>'; 
+            listaImg.innerHTML = '<p style="padding:20px;">Cargando...</p>'; 
 
             let imagenesHTML = '';
             for (let j = 1; j <= 400; j++) {
-                // El lazy loading ayudará a que cargue rápido sin trabarse
-                imagenesHTML += <img src="cap-${num}/${j}.jpg" loading="lazy" onerror="this.style.display='none'">;
+                imagenesHTML += <img src="cap-${num}/${j}.jpg" loading="lazy" onerror="this.remove()">;
             }
-            
             listaImg.innerHTML = imagenesHTML;
 
-            // Lógica de navegación
             const btnSig = document.getElementById('btn-sig');
             const btnAnt = document.getElementById('btn-ant');
 
@@ -112,16 +96,15 @@
 
             if (num > 1) {
                 btnAnt.style.display = 'block';
-                btnAnt.innerText = '⬅️ CAPÍTULO ANTERIOR ' + (num - 1);
+                btnAnt.innerText = 'CAPÍTULO ANTERIOR ' + (num - 1);
                 btnAnt.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num - 1); };
             } else {
                 btnAnt.style.display = 'none';
             }
-
             window.scrollTo(0,0);
         }
 
-        // Lanzar la creación de botones inmediatamente
+        // 3. Ejecutar inmediatamente al cargar la página
         cargarBotones();
     </script>
 </body>
