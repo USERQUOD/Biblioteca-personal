@@ -7,13 +7,13 @@
     <style>
         body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; overflow-x: hidden; }
         
-        /* Efecto de Fondo Borroso */
+        /* Fondo Borroso */
         .fondo-borroso {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: url('portada.jpg') no-repeat center center;
             background-size: cover;
-            filter: blur(20px) brightness(0.3);
+            filter: blur(25px) brightness(0.3);
             transform: scale(1.1);
             z-index: -1;
         }
@@ -21,44 +21,35 @@
         .contenedor { padding: 40px 20px; max-width: 600px; margin: auto; position: relative; }
         
         img.portada { 
-            width: 100%; 
-            max-width: 280px; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border: 2px solid rgba(255,255,255,0.1);
+            width: 100%; max-width: 280px; border-radius: 10px; margin-bottom: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);
         }
 
         .sinopsis { 
-            background: rgba(30, 30, 30, 0.8); 
-            padding: 20px; 
-            border-radius: 10px; 
-            text-align: left; 
-            margin-bottom: 25px; 
-            font-size: 14px; 
-            line-height: 1.5; 
-            backdrop-filter: blur(10px);
-            border-left: 4px solid #e50914;
+            background: rgba(20, 20, 20, 0.85); padding: 20px; border-radius: 10px; 
+            text-align: left; margin-bottom: 25px; font-size: 14px; line-height: 1.5; 
+            backdrop-filter: blur(10px); border-left: 4px solid #e50914;
         }
         
-        /* Botones de capítulos */
-        .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+        /* Grid de botones */
+        .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+        
         .btn-cap { 
-            background: rgba(50, 50, 50, 0.9); 
-            color: white; border: none; padding: 12px; 
+            background: #e50914; color: white; border: none; padding: 15px; 
             cursor: pointer; border-radius: 5px; font-weight: bold; 
-            display: none; transition: 0.3s;
+            display: none; /* Se activa solo si existe la carpeta */
+            transition: 0.3s;
         }
-        .btn-cap:hover { background: #e50914; transform: scale(1.05); }
+        .btn-cap:hover { transform: scale(1.05); background: #ff0000; }
         
-        /* Visor de Manga */
-        #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
+        /* Lector */
+        #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; }
         
-        /* Controles inferiores */
+        /* Navegación final */
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
-        .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -66,7 +57,7 @@
     <div class="fondo-borroso"></div>
 
     <div id="inicio" class="contenedor">
-        <h1 style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">High School Salty Heart</h1>
+        <h1>High School Salty Heart</h1>
         <img src="portada.jpg" class="portada">
         
         <div class="sinopsis">
@@ -74,7 +65,7 @@
             Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él.
         </div>
 
-        <h3 style="text-align: left; margin-bottom: 15px;">Capítulos disponibles:</h3>
+        <h3 style="text-align: left;">Capítulos Publicados:</h3>
         <div class="grid-capitulos" id="lista-botones"></div>
     </div>
 
@@ -82,27 +73,33 @@
         <div id="lista-imagenes"></div>
 
         <div class="controles-inferiores">
-            <p style="color: #666;">Fin del capítulo</p>
             <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO ➡️</button>
-            <button class="btn-secundario" onclick="location.reload()">VER LISTA DE CAPÍTULOS</button>
-            <button id="btn-ant" class="btn-secundario">⬅️ CAPÍTULO ANTERIOR</button>
+            <button class="btn-secundario" onclick="location.reload()">LISTA DE CAPÍTULOS</button>
+            <button id="btn-ant" class="btn-secundario">⬅️ ANTERIOR</button>
         </div>
     </div>
+
     <script>
         const contenedorBotones = document.getElementById('lista-botones');
         
-        // Detectar automáticamente carpetas hasta el 500
-        for (let i = 1; i <= 500; i++) {
-            const boton = document.createElement('button');
-            boton.className = 'btn-cap';
-            boton.id = 'btn-lista-' + i;
-            boton.innerText = 'Cap ' + i;
-            boton.onclick = () => abrirCapitulo(i);
-            contenedorBotones.appendChild(boton);
+        // Función para detectar capítulos automáticamente
+        function detectarCapitulos() {
+            for (let i = 1; i <= 500; i++) {
+                const boton = document.createElement('button');
+                boton.className = 'btn-cap';
+                boton.id = 'btn-cap-' + i;
+                boton.innerText = 'Cap ' + i;
+                boton.onclick = () => abrirCapitulo(i);
+                contenedorBotones.appendChild(boton);
 
-            let prueba = new Image();
-            prueba.src = cap-${i}/1.jpg;
-            prueba.onload = () => { document.getElementById('btn-lista-' + i).style.display = 'block'; };
+                // Comprobamos si la carpeta existe buscando la imagen 1.jpg
+                let imgCheck = new Image();
+                imgCheck.src = "cap-" + i + "/1.jpg";
+
+                imgCheck.onload = function() {
+                    document.getElementById('btn-cap-' + i).style.display = 'block';
+                };
+            }
         }
 
         function abrirCapitulo(num) {
@@ -111,17 +108,20 @@
             document.getElementById('visor-manga').style.display = 'block';
             
             const listaImg = document.getElementById('lista-imagenes');
-            listaImg.innerHTML = ''; 
+            listaImg.innerHTML = '<p style="padding:20px;">Cargando imágenes...</p>'; 
 
-            for (let j = 1; j <= 300; j++) {
-                const img = document.createElement('img');
-                img.src = cap-${num}/${j}.jpg;
-                img.loading = "lazy";
-                img.onerror = function() { this.style.display = 'none'; };
-                listaImg.appendChild(img);
-            }
+            setTimeout(() => {
+                listaImg.innerHTML = ''; 
+                for (let j = 1; j <= 300; j++) {
+                    const img = document.createElement('img');
+                    img.src = cap-${num}/${j}.jpg;
+                    img.loading = "lazy";
+                    img.onerror = function() { this.style.display = 'none'; };
+                    listaImg.appendChild(img);
+                }
+            }, 500);
 
-            // Configurar botones Siguiente y Anterior
+            // Lógica de botones de navegación
             document.getElementById('btn-ant').style.display = (num > 1) ? 'block' : 'none';
             document.getElementById('btn-ant').onclick = () => abrirCapitulo(num - 1);
             
@@ -130,6 +130,9 @@
 
             window.scrollTo(0,0);
         }
+
+        // Iniciar detección
+        detectarCapitulos();
     </script>
 </body>
 </html>
