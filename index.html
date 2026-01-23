@@ -30,8 +30,17 @@
         
         .btn-cap { background: #e50914; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; font-weight: bold; }
         
+        /* Lector optimizado */
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
-        #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
+        #visor-manga img { 
+            width: 100%; 
+            max-width: 800px; 
+            display: block; 
+            margin: 0 auto; 
+            height: auto;
+            min-height: 300px; /* Reserva espacio para que no salte la pantalla */
+            background: #000;
+        }
         
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
@@ -56,6 +65,7 @@
     <div id="visor-manga">
         <div id="lista-imagenes"></div>
         <div class="controles-inferiores">
+            <p style="color: #666; margin-bottom: 10px;">Fin del capítulo</p>
             <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO ➡️</button>
             <button class="btn-secundario" onclick="window.location.reload()">VER LISTA DE CAPÍTULOS</button>
             <button id="btn-ant" class="btn-secundario">⬅️ CAPÍTULO ANTERIOR</button>
@@ -63,44 +73,44 @@
     </div>
 
     <script>
-        // --- CAMBIA ESTE NÚMERO CADA VEZ QUE SUBAS UN CAP ---
+        // --- SOLO CAMBIA ESTE NÚMERO ---
         const capitulosSubidos = 1; 
-        // ---------------------------------------------------
+        // -------------------------------
 
         const contenedorBotones = document.getElementById('lista-botones');
 
         function crearBotones() {
-            let html = '';
+            contenedorBotones.innerHTML = '';
             for (let i = 1; i <= capitulosSubidos; i++) {
-                html += <button class="btn-cap" onclick="abrirCapitulo(${i})">Cap ${i}</button>;
+                const boton = document.createElement('button');
+                boton.className = 'btn-cap';
+                boton.innerText = 'Cap ' + i;
+                boton.onclick = () => abrirCapitulo(i);
+                contenedorBotones.appendChild(boton);
             }
-            contenedorBotones.innerHTML = html;
         }
 
         function abrirCapitulo(num) {
             document.getElementById('inicio').style.display = 'none';
             document.querySelector('.fondo-borroso').style.display = 'none';
-            const visor = document.getElementById('visor-manga');
-            const listaImg = document.getElementById('lista-imagenes');
+            document.getElementById('visor-manga').style.display = 'block';
             
-            visor.style.display = 'block';
+            const listaImg = document.getElementById('lista-imagenes');
             listaImg.innerHTML = ''; 
 
-            // Carga rápida con fragmentos
-            const fragmento = document.createDocumentFragment();
+            // CREACIÓN RÁPIDA DE IMÁGENES
             for (let j = 1; j <= 400; j++) {
                 const img = document.createElement('img');
                 img.src = cap-${num}/${j}.jpg;
-                img.loading = "lazy"; // Esto hace que solo carguen las fotos que el usuario va viendo al bajar
-                img.onerror = function() { this.remove(); };
-                fragmento.appendChild(img);
+                img.loading = "lazy"; // <--- ESTO ES LO QUE DA VELOCIDAD
+                img.alt = "Cargando página...";
+                img.onerror = function() { this.style.display = 'none'; };
+                listaImg.appendChild(img);
             }
-            listaImg.appendChild(fragmento);
 
-            // Botones navegación
+            // Configurar botones de navegación
             const btnSig = document.getElementById('btn-sig');
             const btnAnt = document.getElementById('btn-ant');
-
             btnAnt.style.display = (num > 1) ? 'block' : 'none';
             btnAnt.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num - 1); };
             
