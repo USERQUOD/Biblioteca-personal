@@ -12,17 +12,13 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: url('portada.jpg') no-repeat center center;
             background-size: cover;
-            filter: blur(25px) brightness(0.3);
+            filter: blur(25px) brightness(0.2);
             transform: scale(1.1);
             z-index: -1;
         }
 
         .contenedor { padding: 40px 20px; max-width: 600px; margin: auto; position: relative; }
-        
-        img.portada { 
-            width: 100%; max-width: 280px; border-radius: 10px; margin-bottom: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);
-        }
+        img.portada { width: 100%; max-width: 280px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
 
         .sinopsis { 
             background: rgba(20, 20, 20, 0.85); padding: 20px; border-radius: 10px; 
@@ -30,24 +26,12 @@
             backdrop-filter: blur(10px); border-left: 4px solid #e50914;
         }
         
-        /* Contenedor de botones */
-        .grid-capitulos { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
-            gap: 12px; 
-            margin-top: 20px;
-            min-height: 50px; /* Para asegurar que el espacio exista */
-        }
+        .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-top: 20px; }
         
-        .btn-cap { 
-            background: #e50914; color: white; border: none; padding: 15px; 
-            cursor: pointer; border-radius: 5px; font-weight: bold; 
-            transition: 0.3s;
-        }
-        .btn-cap:hover { transform: scale(1.05); background: #ff0000; }
+        .btn-cap { background: #e50914; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; font-weight: bold; }
         
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
-        #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; }
+        #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
         
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
@@ -61,12 +45,10 @@
     <div id="inicio" class="contenedor">
         <h1>High School Salty Heart</h1>
         <img src="portada.jpg" class="portada">
-        
         <div class="sinopsis">
             <strong>Sinopsis:</strong><br>
-            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él.
+            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero el destino lo empuja de nuevo hacia él.
         </div>
-
         <h3 style="text-align: left;">Capítulos Publicados:</h3>
         <div class="grid-capitulos" id="lista-botones"></div>
     </div>
@@ -74,68 +56,66 @@
     <div id="visor-manga">
         <div id="lista-imagenes"></div>
         <div class="controles-inferiores">
-            <p style="color: #666; margin-bottom: 10px;">Fin del capítulo</p>
             <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO ➡️</button>
-            <button class="btn-secundario" onclick="location.reload()">VER LISTA DE CAPÍTULOS</button>
+            <button class="btn-secundario" onclick="window.location.reload()">VER LISTA DE CAPÍTULOS</button>
             <button id="btn-ant" class="btn-secundario">⬅️ CAPÍTULO ANTERIOR</button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN MANUAL ---
-        // Cambia este número al total de capítulos que tengas carpetas (ej. 1, 2, 5...)
+        // --- CAMBIA ESTE NÚMERO CADA VEZ QUE SUBAS UN CAP ---
         const capitulosSubidos = 1; 
-        // ----------------------------
+        // ---------------------------------------------------
 
         const contenedorBotones = document.getElementById('lista-botones');
+
         function crearBotones() {
-            // Limpiamos por si acaso
-            contenedorBotones.innerHTML = '';
-            
+            let html = '';
             for (let i = 1; i <= capitulosSubidos; i++) {
-                const boton = document.createElement('button');
-                boton.className = 'btn-cap';
-                boton.innerText = 'Cap ' + i;
-                boton.onclick = function() {
-                    abrirCapitulo(i);
-                };
-                contenedorBotones.appendChild(boton);
+                html += <button class="btn-cap" onclick="abrirCapitulo(${i})">Cap ${i}</button>;
             }
+            contenedorBotones.innerHTML = html;
         }
 
         function abrirCapitulo(num) {
             document.getElementById('inicio').style.display = 'none';
             document.querySelector('.fondo-borroso').style.display = 'none';
-            document.getElementById('visor-manga').style.display = 'block';
-            
+            const visor = document.getElementById('visor-manga');
             const listaImg = document.getElementById('lista-imagenes');
+            
+            visor.style.display = 'block';
             listaImg.innerHTML = ''; 
 
+            // Carga rápida con fragmentos
+            const fragmento = document.createDocumentFragment();
             for (let j = 1; j <= 400; j++) {
                 const img = document.createElement('img');
-                img.src = "cap-" + num + "/" + j + ".jpg";
-                img.loading = "lazy";
-                img.onerror = function() { this.style.display = 'none'; };
-                listaImg.appendChild(img);
+                img.src = cap-${num}/${j}.jpg;
+                img.loading = "lazy"; // Esto hace que solo carguen las fotos que el usuario va viendo al bajar
+                img.onerror = function() { this.remove(); };
+                fragmento.appendChild(img);
             }
+            listaImg.appendChild(fragmento);
 
-            // Configurar botones de navegación
-            document.getElementById('btn-ant').style.display = (num > 1) ? 'block' : 'none';
-            document.getElementById('btn-ant').onclick = () => abrirCapitulo(num - 1);
+            // Botones navegación
+            const btnSig = document.getElementById('btn-sig');
+            const btnAnt = document.getElementById('btn-ant');
+
+            btnAnt.style.display = (num > 1) ? 'block' : 'none';
+            btnAnt.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num - 1); };
             
             if (num < capitulosSubidos) {
-                document.getElementById('btn-sig').style.display = 'block';
-                document.getElementById('btn-sig').innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
-                document.getElementById('btn-sig').onclick = () => abrirCapitulo(num + 1);
+                btnSig.style.display = 'block';
+                btnSig.innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
+                btnSig.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num + 1); };
             } else {
-                document.getElementById('btn-sig').style.display = 'none';
+                btnSig.style.display = 'none';
             }
 
             window.scrollTo(0,0);
         }
 
-        // EJECUTAR AL CARGAR
-        window.onload = crearBotones;
+        crearBotones();
     </script>
 </body>
 </html>
