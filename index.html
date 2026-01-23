@@ -59,7 +59,7 @@
         <h3 style="text-align: left;">Capítulos Publicados:</h3>
         
         <div class="grid-capitulos" id="lista-botones">
-            <button class="btn-cap" onclick="abrirCapitulo(2)">Cap 2</button>
+            <button class="btn-cap" onclick="abrirCapitulo(1)">Cap 1</button>
             </div>
     </div>
 
@@ -75,7 +75,7 @@
 
     <script>
         // Cambia este número al total de capítulos que tengas
-        const totalCaps = 2;
+        const totalCaps = 1;
 
         function abrirCapitulo(num) {
             document.getElementById('inicio').style.display = 'none';
@@ -117,5 +117,69 @@
     </script>
 </body>
 </html>
+<h3 style="text-align: left;">Capítulos Publicados:</h3>
+<div class="grid-capitulos" id="lista-botones">
+    </div>
 
+<script>
+    // 1. Aquí cambias el número y se crearán los botones automáticamente
+    const totalCaps = 2; 
 
+    // 2. Esta es la función que fabrica los botones
+    function crearBotonesManuales() {
+        const contenedor = document.getElementById('lista-botones');
+        contenedor.innerHTML = ''; // Limpia para que no se repitan
+        
+        for (let i = 1; i <= totalCaps; i++) {
+            const boton = document.createElement('button');
+            boton.className = 'btn-cap'; // Mantiene tu estilo rojo
+            boton.innerText = 'Cap ' + i;
+            boton.onclick = function() {
+                abrirCapitulo(i); // Usa tu función que ya funciona
+            };
+            contenedor.appendChild(boton);
+        }
+    }
+
+    // 3. Tu función abrirCapitulo se queda IGUAL (No la toco)
+    function abrirCapitulo(num) {
+        document.getElementById('inicio').style.display = 'none';
+        document.querySelector('.fondo-borroso').style.display = 'none';
+        document.getElementById('visor-manga').style.display = 'block';
+        
+        const listaImg = document.getElementById('lista-imagenes');
+        listaImg.innerHTML = ''; 
+
+        for (let j = 1; j <= 400; j++) {
+            const img = document.createElement('img');
+            img.src = "cap-" + num + "/" + j + ".jpg";
+            img.loading = "lazy";
+            img.onerror = function() { this.style.display = 'none'; };
+            listaImg.appendChild(img);
+        }
+
+        // Configuración de botones de navegación (Siguiente/Anterior)
+        const btnSig = document.getElementById('btn-sig');
+        const btnAnt = document.getElementById('btn-ant');
+
+        if (btnAnt) {
+            btnAnt.style.display = (num > 1) ? 'block' : 'none';
+            btnAnt.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num - 1); };
+        }
+        
+        if (btnSig) {
+            if (num < totalCaps) {
+                btnSig.style.display = 'block';
+                btnSig.innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
+                btnSig.onclick = () => { window.scrollTo(0,0); abrirCapitulo(num + 1); };
+            } else {
+                btnSig.style.display = 'none';
+            }
+        }
+
+        window.scrollTo(0,0);
+    }
+
+    // 4. Ejecutamos la creación de botones al final
+    crearBotonesManuales();
+</script>
