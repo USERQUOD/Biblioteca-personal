@@ -5,96 +5,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>High School Salty Heart - Biblioteca</title>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; }
-        .contenedor { padding: 20px; max-width: 600px; margin: auto; }
-        img.portada { width: 100%; max-width: 280px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .sinopsis { background: #222; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 25px; font-size: 14px; line-height: 1.5; border-left: 4px solid #e50914; }
+        body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; overflow-x: hidden; }
         
-        /* Cuadrícula de botones automática */
-        .grid-capitulos { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
-            gap: 10px; 
-            margin-top: 20px; 
+        /* Efecto de Fondo Borroso */
+        .fondo-borroso {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('portada.jpg') no-repeat center center;
+            background-size: cover;
+            filter: blur(20px) brightness(0.3);
+            transform: scale(1.1);
+            z-index: -1;
         }
+
+        .contenedor { padding: 40px 20px; max-width: 600px; margin: auto; position: relative; }
+        
+        img.portada { 
+            width: 100%; 
+            max-width: 280px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .sinopsis { 
+            background: rgba(30, 30, 30, 0.8); 
+            padding: 20px; 
+            border-radius: 10px; 
+            text-align: left; 
+            margin-bottom: 25px; 
+            font-size: 14px; 
+            line-height: 1.5; 
+            backdrop-filter: blur(10px);
+            border-left: 4px solid #e50914;
+        }
+        
+        /* Botones de capítulos */
+        .grid-capitulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
         .btn-cap { 
-            background: #333; 
-            color: white; 
-            border: none; 
-            padding: 12px; 
-            cursor: pointer; 
-            border-radius: 5px; 
-            font-weight: bold; 
-            font-size: 14px;
+            background: rgba(50, 50, 50, 0.9); 
+            color: white; border: none; padding: 12px; 
+            cursor: pointer; border-radius: 5px; font-weight: bold; 
+            display: none; transition: 0.3s;
         }
-        .btn-cap:hover { background: #e50914; }
+        .btn-cap:hover { background: #e50914; transform: scale(1.05); }
         
-        #visor-manga { display: none; background: black; width: 100%; }
+        /* Visor de Manga */
+        #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; }
-        .nav-lector { padding: 15px; background: #111; position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .btn-v { background: #444; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-size: 14px; }
+        
+        /* Controles inferiores */
+        .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
+        .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; }
     </style>
 </head>
 <body>
 
+    <div class="fondo-borroso"></div>
+
     <div id="inicio" class="contenedor">
-        <h1>High School Salty Heart</h1>
+        <h1 style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">High School Salty Heart</h1>
         <img src="portada.jpg" class="portada">
+        
         <div class="sinopsis">
             <strong>Sinopsis:</strong><br>
-            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él.Se reaviva la llama y, en una situación desesperada, Geonwu termina compartiendo cama con el chico que juró olvidar. 
+            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero, después de regresar a la universidad, el destino lo empuja de nuevo hacia él.
         </div>
 
-        <h3>Selecciona un Capítulo:</h3>
-        <div class="grid-capitulos" id="lista-botones">
-            </div>
+        <h3 style="text-align: left; margin-bottom: 15px;">Capítulos disponibles:</h3>
+        <div class="grid-capitulos" id="lista-botones"></div>
     </div>
 
     <div id="visor-manga">
-        <div class="nav-lector">
-            <a href="#" class="btn-v" onclick="location.reload()">⬅️ VOLVER</a>
-            <span id="titulo-cap" style="font-weight: bold; color: #e50914;"></span>
-            <div style="width: 40px;"></div>
-        </div>
         <div id="lista-imagenes"></div>
-        <p style="padding: 40px; color: #444;">Fin del capítulo</p>
+
+        <div class="controles-inferiores">
+            <p style="color: #666;">Fin del capítulo</p>
+            <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO ➡️</button>
+            <button class="btn-secundario" onclick="location.reload()">VER LISTA DE CAPÍTULOS</button>
+            <button id="btn-ant" class="btn-secundario">⬅️ CAPÍTULO ANTERIOR</button>
+        </div>
     </div>
-
     <script>
-        // --- CONFIGURACIÓN ---
-        const totalCapitulos = 2; // Aquí pon el número de capítulos que quieres que aparezcan
-        // ---------------------
-
         const contenedorBotones = document.getElementById('lista-botones');
-
-        // Crear los botones automáticamente
-        for (let i = 1; i <= totalCapitulos; i++) {
+        
+        // Detectar automáticamente carpetas hasta el 500
+        for (let i = 1; i <= 500; i++) {
             const boton = document.createElement('button');
             boton.className = 'btn-cap';
+            boton.id = 'btn-lista-' + i;
             boton.innerText = 'Cap ' + i;
             boton.onclick = () => abrirCapitulo(i);
             contenedorBotones.appendChild(boton);
+
+            let prueba = new Image();
+            prueba.src = cap-${i}/1.jpg;
+            prueba.onload = () => { document.getElementById('btn-lista-' + i).style.display = 'block'; };
         }
 
         function abrirCapitulo(num) {
             document.getElementById('inicio').style.display = 'none';
+            document.querySelector('.fondo-borroso').style.display = 'none';
             document.getElementById('visor-manga').style.display = 'block';
-            document.getElementById('titulo-cap').innerText = 'CAPÍTULO ' + num;
             
             const listaImg = document.getElementById('lista-imagenes');
             listaImg.innerHTML = ''; 
-            // Carga hasta 500 fotos por carpeta
-            for (let j = 1; j <= 500; j++) {
+
+            for (let j = 1; j <= 300; j++) {
                 const img = document.createElement('img');
-                img.src = "cap-" + num + "/" + j + ".jpg";
+                img.src = cap-${num}/${j}.jpg;
                 img.loading = "lazy";
                 img.onerror = function() { this.style.display = 'none'; };
                 listaImg.appendChild(img);
             }
+
+            // Configurar botones Siguiente y Anterior
+            document.getElementById('btn-ant').style.display = (num > 1) ? 'block' : 'none';
+            document.getElementById('btn-ant').onclick = () => abrirCapitulo(num - 1);
+            
+            document.getElementById('btn-sig').innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
+            document.getElementById('btn-sig').onclick = () => abrirCapitulo(num + 1);
+
             window.scrollTo(0,0);
         }
     </script>
 </body>
 </html>
-
-
