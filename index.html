@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>High School Salty Heart</title>
+    <title>High School Salty Heart - ZETA</title>
     <style>
         body { background: #121212; color: white; font-family: sans-serif; margin: 0; text-align: center; }
         .fondo-borroso {
@@ -19,8 +19,18 @@
             text-align: left; margin-bottom: 25px; border-left: 4px solid #e50914;
         }
         .grid-capitulos { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
-        .btn-cap { background: #e50914; color: white; border: none; padding: 15px 25px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 16px; }
+        .btn-cap { background: #e50914; color: white; border: none; padding: 15px 25px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 16px; min-width: 100px; transition: 0.3s; }
+        .btn-cap:hover { background: #ff0a16; transform: scale(1.05); }
         
+        /* Botón Telegram en ROJO */
+        .btn-telegram { 
+            display: inline-block; background-color: #e50914; color: white; padding: 15px 25px; 
+            text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px; 
+            box-shadow: 0 4px #8b0000; width: 100%; max-width: 350px; transition: 0.3s;
+        }
+        .btn-telegram:hover { background-color: #ff0a16; transform: scale(1.02); box-shadow: 0 6px #8b0000; }
+        .btn-telegram:active { box-shadow: 0 2px #8b0000; transform: translateY(2px); }
+
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
         
@@ -36,46 +46,45 @@
     <div id="inicio" class="contenedor">
         <h1>High School Salty Heart</h1>
         <img src="portada.jpg" class="portada">
+        
         <div class="sinopsis">
             <strong>Sinopsis:</strong><br>
-            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero el destino lo empuja de nuevo hacia él. Se reaviva la llama y, en una situación desesperada, Geonwu termina compartiendo cama con el chico que juró olvidar.
+            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero el destino lo empuja de nuevo hacia él.
         </div>
-        <div style="display: flex; align-items: center; justify-content: center; margin: 20px 0;">
-    <a href="https://t.me/+VCcLn0_Kky8wMzhh" style="background-color: #0088cc; color: white; padding: 15px 20px; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px; box-shadow: 0 4px #005a87;">
-        ZETA - GRUPO DE TELEGRAM 📌
-    </a>
-    <span style="margin-left: 10px; font-weight: bold; color: #cc0000; font-size: 16px;">
-        ⬅️ Apreta aquí
-    </span>
-</div>
+
+        <div style="margin-bottom: 30px;">
+            <a href="https://t.me/+VCcLn0_Kky8wMzhh" class="btn-telegram">
+                ZETA - CANAL DE TELEGRAM 📌
+            </a>
+        </div>
         
         <h3 style="text-align: left;">Capítulos Publicados:</h3>
-        
-        <div class="grid-capitulos">
-            <button class="btn-cap" onclick="abrirCapitulo(1)">Cap 1</button>
-            <button class="btn-cap" onclick="abrirCapitulo(2)">Cap 2</button>
-            <button class="btn-cap" onclick="abrirCapitulo(3)">Cap 3</button>
-            <button class="btn-cap" onclick="abrirCapitulo(4)">Cap 4</button>
-            <button class="btn-cap" onclick="abrirCapitulo(5)">Cap 5</button>
-            <button class="btn-cap" onclick="abrirCapitulo(6)">Cap 6</button>
-            </div>
+        <div id="grid-botones" class="grid-capitulos"></div>
     </div>
 
     <div id="visor-manga">
         <div id="lista-imagenes"></div>
         <div class="controles-inferiores">
-            <button id="btn-sig" class="btn-nav">SIGUIENTE CAPÍTULO</button>
+            <button id="btn-sig" class="btn-nav">SIGUIENTE</button>
             <button class="btn-secundario" onclick="window.location.reload()">VOLVER A LA LISTA</button>
-            <button id="btn-ant" class="btn-secundario" style="display:none;">⬅️ CAPÍTULO ANTERIOR</button>
+            <button id="btn-ant" class="btn-secundario">⬅️ ANTERIOR</button>
         </div>
     </div>
 
     <script>
-        // CAMBIA ESTO A 3 CUANDO SUBAS EL CAP 3
-        var totalCapsActuales = 6; 
+        // MANUAL: Aquí editas el orden y los nombres de los capítulos
+        var misCapitulos = ["1", "2", "3", "4", "5", "6"];
+        var grid = document.getElementById('grid-botones');
+        misCapitulos.forEach((cap, index) => {
+            var btn = document.createElement('button');
+            btn.className = 'btn-cap';
+            btn.innerText = isNaN(cap) ? cap : "Cap " + cap;
+            btn.onclick = function() { abrirCapitulo(index); };
+            grid.appendChild(btn);
+        });
 
-        function abrirCapitulo(num) {
-            // Ocultar inicio y mostrar visor
+        function abrirCapitulo(index) {
+            var capCarpeta = misCapitulos[index]; 
             document.getElementById('inicio').style.display = 'none';
             document.getElementById('visor-manga').style.display = 'block';
             window.scrollTo(0,0);
@@ -83,32 +92,31 @@
             var visor = document.getElementById('lista-imagenes');
             visor.innerHTML = ''; 
 
-            // Cargar imágenes del capítulo
             for (var j = 1; j <= 400; j++) {
                 var img = document.createElement('img');
-                img.src = "cap-" + num + "/" + j + ".jpg";
+                img.src = "cap-" + capCarpeta + "/" + j + ".jpg";
                 img.loading = "lazy";
                 img.onerror = function() { this.remove(); };
                 visor.appendChild(img);
             }
-            // Configurar botones de navegación
+
             var btnSig = document.getElementById('btn-sig');
             var btnAnt = document.getElementById('btn-ant');
 
-            // Botón Siguiente
-            if (num < totalCapsActuales) {
+            if (index < misCapitulos.length - 1) {
+                var sigNombre = misCapitulos[index + 1];
                 btnSig.style.display = 'block';
-                btnSig.innerText = 'SIGUIENTE CAPÍTULO ' + (num + 1);
-                btnSig.onclick = function() { abrirCapitulo(num + 1); };
+                btnSig.innerText = 'SIGUIENTE: ' + (isNaN(sigNombre) ? sigNombre.toUpperCase() : 'CAP ' + sigNombre);
+                btnSig.onclick = function() { abrirCapitulo(index + 1); };
             } else {
                 btnSig.style.display = 'none';
             }
 
-            // Botón Anterior
-            if (num > 1) {
+            if (index > 0) {
+                var antNombre = misCapitulos[index - 1];
                 btnAnt.style.display = 'block';
-                btnAnt.innerText = '⬅️ CAPÍTULO ANTERIOR ' + (num - 1);
-                btnAnt.onclick = function() { abrirCapitulo(num - 1); };
+                btnAnt.innerText = '⬅️ ANTERIOR: ' + (isNaN(antNombre) ? antNombre.toUpperCase() : 'CAP ' + antNombre);
+                btnAnt.onclick = function() { abrirCapitulo(index - 1); };
             } else {
                 btnAnt.style.display = 'none';
             }
@@ -116,9 +124,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
