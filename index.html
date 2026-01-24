@@ -22,21 +22,34 @@
         .btn-cap { background: #e50914; color: white; border: none; padding: 15px 25px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 16px; min-width: 100px; transition: 0.3s; }
         .btn-cap:hover { background: #ff0a16; transform: scale(1.05); }
         
-        /* Botón Telegram en ROJO */
+        /* Botón Telegram Ajustado */
         .btn-telegram { 
-            display: inline-block; background-color: #e50914; color: white; padding: 15px 25px; 
+            display: inline-block; background-color: #e50914; color: white; padding: 15px 10px; 
             text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px; 
-            box-shadow: 0 4px #8b0000; width: 100%; max-width: 350px; transition: 0.3s;
+            box-shadow: 0 4px #8b0000; width: 90%; max-width: 320px; transition: 0.3s;
+            box-sizing: border-box;
         }
-        .btn-telegram:hover { background-color: #ff0a16; transform: scale(1.02); box-shadow: 0 6px #8b0000; }
-        .btn-telegram:active { box-shadow: 0 2px #8b0000; transform: translateY(2px); }
+        .btn-telegram:hover { background-color: #ff0a16; transform: scale(1.02); }
 
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
         
+        /* Controles del Visor */
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .btn-nav { background: #e50914; color: white; border: none; padding: 18px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 350px; }
-        .btn-secundario { background: #333; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; width: 100%; max-width: 350px; }
+        
+        /* BOTONES ROJOS (Siguiente y Anterior ahora son iguales) */
+        .btn-nav { 
+            background: #e50914; color: white; border: none; padding: 18px 30px; 
+            font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; 
+            width: 90%; max-width: 350px; transition: 0.3s; 
+        }
+        .btn-nav:hover { background: #ff0a16; }
+
+        .btn-secundario { 
+            background: #333; color: white; border: none; padding: 12px 20px; 
+            border-radius: 5px; cursor: pointer; width: 90%; max-width: 350px; 
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -49,7 +62,7 @@
         
         <div class="sinopsis">
             <strong>Sinopsis:</strong><br>
-            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero el destino lo empuja de nuevo hacia él.
+            Cha Geonwu creyó haber dejado atrás su amor imposible por Lee Taejun, pero el destino lo empuja de nuevo hacia él. Se reaviva la llama y, en una situación desesperada, Geonwu termina compartiendo cama con el chico que juró olvidar.
         </div>
 
         <div style="margin-bottom: 30px;">
@@ -66,14 +79,14 @@
         <div id="lista-imagenes"></div>
         <div class="controles-inferiores">
             <button id="btn-sig" class="btn-nav">SIGUIENTE</button>
+            <button id="btn-ant" class="btn-nav"> ANTERIOR</button>
             <button class="btn-secundario" onclick="window.location.reload()">VOLVER A LA LISTA</button>
-            <button id="btn-ant" class="btn-secundario">⬅️ ANTERIOR</button>
         </div>
     </div>
-
     <script>
-        // MANUAL: Aquí editas el orden y los nombres de los capítulos
-        var misCapitulos = ["1", "2", "3", "4", "5", "6"];
+        // MANUAL: Aquí editas tu lista de capítulos
+        var misCapitulos = ["1", "2", "3", "4", "5", "6"]; 
+
         var grid = document.getElementById('grid-botones');
         misCapitulos.forEach((cap, index) => {
             var btn = document.createElement('button');
@@ -103,6 +116,7 @@
             var btnSig = document.getElementById('btn-sig');
             var btnAnt = document.getElementById('btn-ant');
 
+            // Configurar SIGUIENTE (Rojo)
             if (index < misCapitulos.length - 1) {
                 var sigNombre = misCapitulos[index + 1];
                 btnSig.style.display = 'block';
@@ -112,12 +126,14 @@
                 btnSig.style.display = 'none';
             }
 
+            // Configurar ANTERIOR (Rojo igual que el Siguiente)
             if (index > 0) {
                 var antNombre = misCapitulos[index - 1];
                 btnAnt.style.display = 'block';
-                btnAnt.innerText = '⬅️ ANTERIOR: ' + (isNaN(antNombre) ? antNombre.toUpperCase() : 'CAP ' + antNombre);
+                btnAnt.innerText = ' ANTERIOR: ' + (isNaN(antNombre) ? antNombre.toUpperCase() : 'CAP ' + antNombre);
                 btnAnt.onclick = function() { abrirCapitulo(index - 1); };
             } else {
+                antNombre.style.display = 'none';
                 btnAnt.style.display = 'none';
             }
         }
