@@ -22,33 +22,31 @@
         .btn-cap { background: #e50914; color: white; border: none; padding: 15px 25px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 16px; min-width: 100px; transition: 0.3s; }
         .btn-cap:hover { background: #ff0a16; transform: scale(1.05); }
         
-        /* Botón Telegram Ajustado */
+        /* Botón Telegram */
         .btn-telegram { 
             display: inline-block; background-color: #e50914; color: white; padding: 15px 10px; 
             text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px; 
             box-shadow: 0 4px #8b0000; width: 90%; max-width: 320px; transition: 0.3s;
             box-sizing: border-box;
         }
-        .btn-telegram:hover { background-color: #ff0a16; transform: scale(1.02); }
 
         #visor-manga { display: none; background: black; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; }
         #visor-manga img { width: 100%; max-width: 800px; display: block; margin: 0 auto; height: auto; }
         
-        /* Controles del Visor */
         .controles-inferiores { padding: 50px 20px; background: #121212; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         
-        /* BOTONES ROJOS (Siguiente y Anterior ahora son iguales) */
+        /* BOTONES DE NAVEGACIÓN ROJOS */
         .btn-nav { 
             background: #e50914; color: white; border: none; padding: 18px 30px; 
             font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; 
-            width: 90%; max-width: 350px; transition: 0.3s; 
+            width: 90%; max-width: 350px; transition: 0.3s; display: none; /* Se ocultan por defecto */
         }
         .btn-nav:hover { background: #ff0a16; }
 
         .btn-secundario { 
-            background: #333; color: white; border: none; padding: 12px 20px; 
-            border-radius: 5px; cursor: pointer; width: 90%; max-width: 350px; 
-            font-weight: bold;
+            background: #333; color: white; border: none; padding: 15px 20px; 
+            border-radius: 8px; cursor: pointer; width: 90%; max-width: 350px; 
+            font-weight: bold; font-size: 16px;
         }
     </style>
 </head>
@@ -66,8 +64,8 @@
         </div>
 
         <div style="margin-bottom: 30px;">
-            <a href="https://t.me/+VCcLn0_Kky8wMzhh" class="btn-telegram">
-                ZETA - CANAL DE TELEGRAM 📌
+            <a href="https://t.me/TU_LINK_AQUI" class="btn-telegram">
+                ZETA - GRUPO DE TELEGRAM 
             </a>
         </div>
         
@@ -78,15 +76,14 @@
     <div id="visor-manga">
         <div id="lista-imagenes"></div>
         <div class="controles-inferiores">
-            <button id="btn-sig" class="btn-nav">SIGUIENTE</button>
-            <button id="btn-ant" class="btn-nav"> ANTERIOR</button>
+            <button id="btn-sig" class="btn-nav"></button>
+            <button id="btn-ant" class="btn-nav"></button>
             <button class="btn-secundario" onclick="window.location.reload()">VOLVER A LA LISTA</button>
         </div>
     </div>
-    <script>
-        // MANUAL: Aquí editas tu lista de capítulos
-        var misCapitulos = ["1", "2", "3", "4", "5", "6"]; 
 
+    <script>
+        var misCapitulos = ["1", "2", "3", "4", "5", "6"];
         var grid = document.getElementById('grid-botones');
         misCapitulos.forEach((cap, index) => {
             var btn = document.createElement('button');
@@ -116,7 +113,7 @@
             var btnSig = document.getElementById('btn-sig');
             var btnAnt = document.getElementById('btn-ant');
 
-            // Configurar SIGUIENTE (Rojo)
+            // Lógica SIGUIENTE
             if (index < misCapitulos.length - 1) {
                 var sigNombre = misCapitulos[index + 1];
                 btnSig.style.display = 'block';
@@ -126,14 +123,13 @@
                 btnSig.style.display = 'none';
             }
 
-            // Configurar ANTERIOR (Rojo igual que el Siguiente)
+            // Lógica ANTERIOR (Solo aparece si NO es el primer capítulo)
             if (index > 0) {
                 var antNombre = misCapitulos[index - 1];
                 btnAnt.style.display = 'block';
                 btnAnt.innerText = ' ANTERIOR: ' + (isNaN(antNombre) ? antNombre.toUpperCase() : 'CAP ' + antNombre);
                 btnAnt.onclick = function() { abrirCapitulo(index - 1); };
             } else {
-                antNombre.style.display = 'none';
                 btnAnt.style.display = 'none';
             }
         }
